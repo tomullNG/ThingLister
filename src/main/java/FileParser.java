@@ -11,4 +11,3 @@ public class FileParser {
         reader.close();
     }
 }
-
