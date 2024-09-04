@@ -1,18 +1,26 @@
+import java.util.HashMap;
+import java.util.Map;
+
 public class ThingsHandler implements LineHandler {
+
+    Map<String, LineHandler> handlers = new HashMap<>();
+
+    public void registerHandler(String type, LineHandler handler) {
+        handlers.put(type, handler);
+    }
 
     @Override
     public void handleLine(String line) throws Exception {
-        FileParser parser = new FileParser();
         var split = line.split(";");
         String type = split[0];
         String file = split[1];
-        switch (type) {
-            case "dogs":
-                parser.parseFile("src/main/resources/" + file, new DogHandler());
-                break;
-            case "people":
-                parser.parseFile("src/main/resources/" + file, new PeopleHandler());
-                break;
+
+        LineHandler handler = handlers.get(type);
+        if (handler != null) {
+            FileParser parser = new FileParser();
+            parser.parseFile("src/main/resources/" + file, handler);
+        } else {
+            System.out.println("No handler registered for type: " + type);
         }
     }
 }
